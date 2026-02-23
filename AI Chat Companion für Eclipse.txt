@@ -1,0 +1,248 @@
+AI Chat Companion für Eclipse
+3D-Avatar (VRM) reagiert visuell auf Nutzer-Interaktionen & Stats
+Rendering über WebView (Three.js + VRM), als Drop-in-Plugin
+
+🧠 Konzept: AI Chat Companion für Eclipse
+Ziel
+
+Ein visueller 3D-Companion in Eclipse, der:
+
+dauerhaft sichtbar ist (View)
+
+auf IDE-Events & AI-Events reagiert
+
+Emotionen / Zustände durch Animationen ausdrückt
+
+keine native 3D-Engine benötigt
+
+als Drop-in .jar Plugin installierbar ist
+
+1️⃣ Gesamtarchitektur (High Level)
+Eclipse IDE
+│
+├─ AI / LLM Plugin (existiert bereits)
+│   └─ Chat Events (Antwort, Fehler, Warten, Erfolg)
+│
+├─ Stats Tracker Page (existiert bereits)
+│   └─ Metriken (Coding Time, Errors, Focus, Frust, Erfolg)
+│
+├─ Companion Plugin (neu)
+│   ├─ Eclipse View (SWT)
+│   │   └─ Browser (WebView)
+│   │       └─ WebGL Scene
+│   │           ├─ Three.js
+│   │           ├─ VRM Loader
+│   │           └─ Companion Controller
+│   │
+│   └─ Java Companion Controller
+│       └─ Event → State → Animation
+
+Bezug:
+
+IDE: Eclipse
+
+Rendering: Three.js
+
+Avatar: VRM
+
+2️⃣ Companion als Eclipse View
+Rolle der View
+
+immer sichtbar (z. B. rechts unten)
+
+kein Fokus-Diebstahl
+
+rein visuell / emotional
+
+Technisch
+
+ViewPart
+
+SWT Browser
+
+lädt lokale HTML aus dem Plugin-JAR
+
+CompanionView
+└─ SWT Browser
+   └─ index.html (aus Plugin)
+
+➡️ Kein externer Server, kein Internet nötig
+
+3️⃣ WebView Layer (3D & Avatar)
+Inhalt des WebViews
+
+Three.js Scene
+
+Kamera + Licht
+
+VRM-Avatar
+
+Companion-State-Machine (JS)
+
+web/
+├─ index.html
+├─ companion.js
+├─ states.js
+├─ three.min.js
+├─ three-vrm.js
+└─ companion.vrm
+Verantwortung
+
+Avatar laden
+
+Idle-Bewegung
+
+Animationen ausführen
+
+Übergänge weich halten
+
+4️⃣ Companion State Machine (zentral!)
+
+Der Companion denkt nicht selbst, sondern visualisiert Zustände.
+
+Beispiel-States
+IDLE
+THINKING
+RESPONDING
+HAPPY
+CONFUSED
+ERROR
+TIRED
+FOCUSED
+Beispiel-Mapping
+State	Bedeutung	Animation
+IDLE	nichts los	Idle / Breathing
+THINKING	LLM arbeitet	Kopf senken / nachdenken
+RESPONDING	Antwort kommt	Sprechen / Nicken
+ERROR	Compiler / LLM Fehler	Kopf schütteln
+HAPPY	Erfolg	Freuen / Winken
+TIRED	lange Session	Gähnen / Dehnen
+
+➡️ kein Chatbot im Avatar
+➡️ reiner Emotions-Renderer
+
+5️⃣ Verbindung zu deinem bestehenden LLM-Plugin
+Java-Seite
+
+Dein LLM-Plugin feuert Events wie:
+
+onLLMRequestStarted
+
+onLLMResponseReceived
+
+onLLMError
+
+Diese Events gehen an den Companion Controller.
+
+Übergabe an WebView
+browser.execute("companion.setState('THINKING')");
+browser.execute("companion.setState('RESPONDING')");
+browser.execute("companion.setState('ERROR')");
+
+➡️ keine enge Kopplung
+➡️ Companion ist ein „Subscriber“
+
+6️⃣ Integration des Stats-Trackers
+Beispiel-Stats
+
+Coding-Zeit
+
+Fehler pro Minute
+
+Fokus-Zeit
+
+Erfolgsquote
+
+Rage-Momente 😄
+
+Logik (Java)
+if (focusTime > 45min) → TIRED
+if (errorRate hoch) → CONFUSED
+if (task completed) → HAPPY
+
+➡️ Stats → State
+➡️ State → Animation
+
+7️⃣ Animationsebene (VRM)
+Wichtige Annahmen
+
+VRM hat:
+
+Skeleton
+
+BlendShapes (optional)
+
+evtl. Idle-Pose
+
+Animationstypen
+
+VRM / Mixamo Clips
+
+Prozedurale Animation
+
+Kopf drehen
+
+Atmen
+
+Wackeln
+
+BlendShape-Mimik
+
+Für Companion absolut ausreichend:
+
+Idle Loop
+
+3–5 Reaktionen
+
+8️⃣ Kommunikation Java ↔ JavaScript
+Java → JS
+
+State setzen
+
+Intensität setzen
+
+Trigger auslösen
+
+browser.execute("companion.react('ERROR', 0.8)");
+JS → Java (optional)
+
+Klick auf Avatar
+
+„User hat Companion angeklickt“
+
+➡️ z. B. Easter Eggs oder Fokus-Reset
+
+9️⃣ Packaging & Distribution
+Plugin-Form
+
+ein einziges .jar
+
+drop-in-fähig
+
+ECLIPSE_HOME/dropins/
+└─ com.example.ai.companion_1.0.0.jar
+Vorteile
+
+✔ einfach zu testen
+✔ leicht zu versionieren
+✔ Open Source freundlich
+
+10️⃣ Warum diese Architektur ideal ist
+Kriterium	Ergebnis
+VRM direkt	✅
+Kein Blender nötig	✅
+Kein nativer 3D-Stress	✅
+Entkoppelt vom LLM	✅
+Erweiterbar	✅
+Wartbar	✅
+🏁 Fazit
+
+Du baust keinen sprechenden Bot, sondern einen:
+
+emotionalen visuellen Spiegel deiner IDE-Interaktionen
+
+Dein LLM denkt.
+Dein Stats-Tracker misst.
+Der Companion fühlt.
+
+Genau das macht ihn stark – und technisch sauber.
