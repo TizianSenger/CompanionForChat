@@ -1,0 +1,12 @@
+# Eclipse plugin build artefacts
+com.example.ai.companion/bin/
+com.example.ai.companion/.settings/
+
+# PDE / Tycho build output
+*.jar
+*.zip
+!com.example.ai.companion/web/*.jar
+
+# OS
+.DS_Store
+Thumbs.db
