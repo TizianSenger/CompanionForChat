@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.ui.views">
+      <category
+            id="com.example.ai.companion.category"
+            name="AI Companion"/>
+      <view
+            id="com.example.ai.companion.CompanionView"
+            name="AI Companion"
+            category="com.example.ai.companion.category"
+            class="com.example.ai.companion.CompanionView"
+            restorable="true"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.preferencePages">
+      <page
+            id="com.example.ai.companion.VrmPreferencePage"
+            name="AI Companion"
+            class="com.example.ai.companion.VrmPreferencePage"/>
+   </extension>
+
+</plugin>
